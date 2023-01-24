@@ -5,6 +5,7 @@ const path = require("path");
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 let mysql = require('mysql');
+const morgan = require('morgan')
 const async = require('async')
 
 
@@ -18,7 +19,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + '/public'));
 
-
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
 
 //middleware for creating user sessions
 const options = {
@@ -27,7 +28,8 @@ const options = {
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE
 };
-const db = mysql.createConnection(options);
+
+const db = mysql.createPool(options);
 const sessionStore = new MySQLStore({}, db);
 app.use(session({
         secret: '1234',
@@ -522,6 +524,7 @@ const e = require('express');
 const { rejects } = require('assert');
 const { request } = require('express');
 const { waitForDebugger } = require('inspector');
+const { all } = require('./routes/users.js');
 app.use('/users', userRouter)
 
 const port = process.env.port || 3000;
