@@ -22,10 +22,10 @@ app.use(express.static(__dirname + '/public'));
 
 //middleware for creating user sessions
 const options = {
-    host: 'localhost',
-    user: 'root',
-    password: 'Blue4524.',
-    database: 'keyboardApp'
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE
 };
 const db = mysql.createConnection(options);
 const sessionStore = new MySQLStore({}, db);
