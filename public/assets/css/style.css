@@ -12,16 +12,20 @@
 
 a {
     text-decoration: none;
-    color: #555555;
+    color: #888888;
     font-size: 20px;
 }
 
 #logout-button {
     text-decoration: none;
-    color: #555555;
+    color: #888888;
     font-size: 20px;
     border-style: none;   
     border-width: 0px;
+}
+
+#logout-button:hover {
+    cursor: pointer;
 }
 
 .taken-username {
@@ -270,6 +274,7 @@ letter, #wpm, .friendRequests {
     width: 400px;
     border-style: solid;
     border-radius: 10px;
+    padding: 5px;
 }
 
 letter {
@@ -321,6 +326,33 @@ letter {
     flex-direction: column;
     text-align: center;
     gap: 5px;
+}
+
+.leaderboard-box{
+    display: flex;
+    margin: auto;
+    justify-content: center;
+}
+
+.leaderboard {
+
+    border-style: solid;
+    padding: 10px;
+    border-radius: 10px;
+    width: 700px;
+}
+
+.leaderboard-row {
+    padding: 5px;
+}
+
+.leaderboard, .leaderboard-row > th, .leaderboard-row > td {
+    background-color: #888888;
+    margin: 5px;
+}
+
+.leaderboard-row > td {
+    text-align: center;
 }
 
 @keyframes blinker {

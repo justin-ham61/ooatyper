@@ -29,7 +29,7 @@
     
 
     function startTimer(){
-        let time = 20
+        let time = 60
         const timer = document.getElementById('countdown');
         const myInterval = setInterval(updateCountdown, 1000);
         function updateCountdown(){
@@ -327,12 +327,12 @@
 
     </script>
 </head>
-<body class="dashboard" onload="initializeVariables()">
+<body class="dashboard" onload="dailyTrial()">
     <div class="header">
         <a href="/dashboard">Typer Challenge</a>
         <div class="right-header">
             <a href="">ACCOUNT</a>
-            <a href="">LEADERBOARD</a>
+            <a href="/leaderboard">LEADERBOARD</a>
             <a href="/friendslist">FRIENDS</a>
 
             <form action="/logout" method="POST">
@@ -343,7 +343,7 @@
     <p id="countdown">60</p>
     <div id="testArea">
         <div id="wrapper">
-            <button id="startBtn" class="btn" onclick="startTest(), startTimer(), dailyTrial()">Begin Test</button>
+            <button id="startBtn" class="btn" onclick="startTest(), startTimer()">Begin Test</button>
             <div id="caret" class="visible"></div>
             <div id="words">
                 <% for (var i = 0; i < count; i++) { %>

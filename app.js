@@ -101,13 +101,12 @@ app.get('/friendslist', isAuth, async (req, res) => {
 
     for (let i = 0; i < friends.length; i++){
         let name = await getUserNames(friends[i])
-        let wpm = await getWPM(friends[i])
-        friendsListNames.push({username: name, wpm: wpm})
+        let wins = await getWins(friends[i])
+        friendsListNames.push({username: name, wins: wins})
     }
     
 
     console.log(friendsListNames)
-    console.log(friends)
 
     function getUserId(currentUsername){
         return new Promise ((resolve, reject) => {
@@ -174,16 +173,17 @@ app.get('/friendslist', isAuth, async (req, res) => {
             })
     }
 
-    function getWPM(user_id){
+    function getWins(user_id){
         return new Promise ((resolve, reject) => {
             db.query(
-                'SELECT wpm FROM users WHERE user_id = ?',
+                'SELECT wins FROM users WHERE user_id = ?',
                 [user_id],
                 function(err, result){
                     if(err){
                         reject(err)
                     } else {
-                        resolve(result[0].wpm)
+                        console.log(result[0].wins)
+                        resolve(result[0].wins)
                     }
                 }
             )
@@ -329,7 +329,7 @@ app.post('/friendslist/acceptFriendRequest', async (req,res) => {
 
 app.post('/friendslist/deleteFriend', async (req, res) => {
     const username = [req.body.username, req.session.user];
-    console.log(username);
+    console.log(username[0]);
     let user_id = [];
 
     for (let i = 0; i < username.length; i++){
@@ -502,6 +502,10 @@ app.post('/updateWPM', async (req, res) => {
     }
 })
 
+app.get('/leaderboard', (req, res) => {
+    res.render('leaderboard')
+})
+
 //renders login page
 app.get('/login', (req, res) => {
     res.render('login')
@@ -527,7 +531,7 @@ const { waitForDebugger } = require('inspector');
 const { all } = require('./routes/users.js');
 app.use('/users', userRouter)
 
-const port = process.env.port || 3000;
+const port = process.env.port || 3003;
 app.listen(port, () => {
     console.log(`server is running on localhost:${port}`);
 })

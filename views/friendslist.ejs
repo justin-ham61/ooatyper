@@ -53,15 +53,8 @@
         <a href="/dashboard">Typer Challenge</a>
         <div class="right-header">
             <a href="">ACCOUNT</a>
-            <a href="">LEADERBOARD</a>
-            <div class="dropdown">
-                <button class="dropbtn">FRIENDS</button>
-                <div class="dropdown-content">
-                    <a href="#">Add Friends</a>
-                    <a href="#">Friends List</a>
-                    <a href="">Friend Requests</a>
-                </div>
-            </div>
+            <a href="/leaderboard">LEADERBOARD</a>
+            <a href="/friendslist">FRIENDS</a>
             <form action="/logout" method="POST">
                 <button id="logout-button">LOGOUT</button>
             </form>
@@ -101,8 +94,8 @@
                             <% for (let i = 0; i < friendListCount; i++) { %> 
                                 <tr>
                                     <td><%- friendsListNames[i].username %> </td>
-                                    <td style="width: 150px;"><%- friendsListNames[i].wpm %> WPM</td>
-                                    <td><button class="deleteButton" onclick="deleteFriend(`<%-friendsListNames[i]%>`);" name="deleteButton" value="<%-requestedUsernames[i]%>">Delete</button></td>
+                                    <td style="width: 150px;"><%- friendsListNames[i].wins %> Wins</td>
+                                    <td><button class="deleteButton" onclick="deleteFriend(`<%-friendsListNames[i].username%>`);" name="deleteButton" value="<%-requestedUsernames[i]%>">Delete</button></td>
                                 </tr>
                             <% } %>
                         <% } %> 

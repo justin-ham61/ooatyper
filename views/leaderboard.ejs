@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="header">
+        <a href="/dashboard">Typer Challenge</a>
+        <div class="right-header">
+            <a href="">ACCOUNT</a>
+            <a href="leaderboard">LEADERBOARD</a>
+            <a href="/friendslist">FRIENDS</a>
+            <form action="/logout" method="POST">
+                <button id="logout-button">LOGOUT</button>
+            </form>
+        </div>
+    </div>
+    <div class="leaderboard-box">
+        <table class="leaderboard">
+            <tr class="leaderboard-row">
+                <th>Username</th>
+                <th>Today's WPM</th>
+                <th>Total Wins</th>
+            </tr>
+            <tr class="leaderboard-row">
+                <td>Justin</td>
+                <td>45 WPM</td>
+                <td>3 Wins</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
