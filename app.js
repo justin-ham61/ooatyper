@@ -531,7 +531,7 @@ const { waitForDebugger } = require('inspector');
 const { all } = require('./routes/users.js');
 app.use('/users', userRouter)
 
-const port = process.env.port || 3003;
+const port = process.env.port || 3000;
 app.listen(port, () => {
     console.log(`server is running on localhost:${port}`);
 })
