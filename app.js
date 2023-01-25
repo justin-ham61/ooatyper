@@ -23,10 +23,10 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
 
 //middleware for creating user sessions
 const options = {
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
+    host: '54.245.149.137',
+    user: 'server',
+    password: 'keyboardPass1.',
+    database: 'keyboardApp'
 };
 
 const db = mysql.createPool(options);

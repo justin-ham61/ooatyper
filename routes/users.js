@@ -5,9 +5,9 @@ let mysql = require('mysql');
 
 
 let db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Blue4524.',
+    host: '54.245.149.137',
+    user: 'server',
+    password: 'keyboardPass1.',
     database: 'keyboardApp'
 });
 
