@@ -26,11 +26,15 @@
                 <th>Today's WPM</th>
                 <th>Total Wins</th>
             </tr>
-            <tr class="leaderboard-row">
-                <td>Justin</td>
-                <td>45 WPM</td>
-                <td>3 Wins</td>
-            </tr>
+            <% if (friendsData.length > 0) { %> 
+                <% for (let i = 0; i < friendsData.length; i++) { %> 
+                    <tr class="leaderboard-row">
+                        <td><%- friendsData[i].result[0].username %> </td>
+                        <td><%- friendsData[i].result[0].wpm %> </td>
+                        <td><%- friendsData[i].result[0].wins %> </td>
+                    </tr>
+                <% } %>
+            <% } %> 
         </table>
     </div>
 </body>

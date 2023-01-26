@@ -78,7 +78,7 @@ app.get('/friendslist', isAuth, async (req, res) => {
     let currentUsername = req.session.user;
     let user_id;
     let friendRequests;
-    let friendsList;
+    
     let friends = [];
     let friendsListNames = [];
     await getUserId(currentUsername);
@@ -88,7 +88,7 @@ app.get('/friendslist', isAuth, async (req, res) => {
         requestedUsernames[i] = await getUserNames(friendRequests[i].user_first_id);
     }
 
-    await getFriendsList(user_id);
+    let friendsList = await getFriendsList(user_id);
 
     for (let i = 0; i < friendsList.length; i++){
         if (friendsList[i].user_first_id == user_id) {
@@ -141,21 +141,7 @@ app.get('/friendslist', isAuth, async (req, res) => {
         })
     }
 
-    function getFriendsList(user_id){
-        return new Promise ((resolve, reject) => {
-            db.query(
-                'SELECT * FROM friends WHERE (user_first_id = ? OR user_second_id = ?) AND (type = ?);',
-                [[user_id], [user_id], 'friends'],
-                function(err, result){
-                    if(err){
-                        reject(err)
-                    } else {
-                        resolve(friendsList = result)
-                    }
-                }
-            )
-        })
-    }
+    
 
     function getUserNames(friendRequests){
         return new Promise ((resolve, reject) => {
@@ -420,91 +406,61 @@ app.post('/friendslist/rejectFriendRequest', async (req,res) => {
 
 app.post('/dailyTrial', async (req, res) => {
     let username = req.session.user;
-    let user_id = await getUserId(username);
+    let user_id = req.session.user_id;
     await updateDailyTrial(user_id);
     console.log(username)
-
-    function getUserId(username){
-        return new Promise ((resolve, reject) => {
-            db.query(
-                'SELECT user_id FROM users WHERE username = ?',
-                [username],
-                function(err, result){
-                    if(err){
-                        reject(err);
-                    } else {
-                        resolve(result[0].user_id)
-                    }
-                }
-            )
-        })
-    };
-
-    function updateDailyTrial(user_id){
-        return new Promise((resolve, reject) => {
-            db.query(
-                'UPDATE users SET DailyTrial = 1 WHERE user_id = ?',
-                [user_id],
-                function(err){
-                    if(err){
-                        reject(err);
-                    } else {
-                        resolve();
-                    }
-                }
-            )
-        })
-    }
     console.log(user_id)
 })
 
 app.post('/updateWPM', async (req, res) => {
-    let username = req.session.user;
     let right = req.body.right;
-    console.log(right)
-
-    let user_id = await getUserId(username);
-
+    let user_id = req.session.user_id;
     await updateWPM(user_id, right);
-    console.log(username, right)
+})
 
-    function getUserId(username){
+app.get('/leaderboard', async (req, res) => {
+    let user_id = req.session.user_id;
+    let friends = []
+    let friendsData = [];
+    let friendsList = await getFriendsList(user_id);
+    for (let i = 0; i < friendsList.length; i++){
+        if (friendsList[i].user_first_id == user_id) {
+            friends[i] = friendsList[i].user_second_id;
+        }
+        else if (friendsList[i].user_second_id == user_id){
+            friends[i] = friendsList[i].user_first_id;
+        }
+    }
+
+    for (let i = 0; i < friends.length; i++){
+        let result = await getFriendsData(friends[i])
+        friendsData.push({result : result})
+    }
+
+    function getFriendsData(user_id){
         return new Promise ((resolve, reject) => {
             db.query(
-                'SELECT user_id FROM users WHERE username = ?',
-                [username],
+                'SELECT * FROM users WHERE user_id = ?',
+                [user_id],
                 function(err, result){
                     if(err){
-                        reject(err);
-                    } else {
-                        resolve(result[0].user_id)
-                    }
-                }
-            )
-        })
-    };
-
-    function updateWPM(user_id, right){
-        return new Promise ((resolve, reject) => {
-            db.query(
-                'UPDATE users SET wpm = ? WHERE user_id = ?',
-                [right, user_id],
-                function(err){
-                    if (err) {
                         reject(err)
                     } else {
-                        console.log('updated wpm in database')
-                        resolve();
+                        resolve(result);
                     }
                 }
             )
         })
     }
+
+    friendsData.reverse
+    console.log(friendsData[0].result[0].wpm)
+    console.log('this is the result')
+    console.log(friends)
+    res.render('leaderboard', {friendsData : friendsData})
 })
 
-app.get('/leaderboard', (req, res) => {
-    res.render('leaderboard')
-})
+
 
 //renders login page
 app.get('/login', (req, res) => {
@@ -530,6 +486,56 @@ const { request } = require('express');
 const { waitForDebugger } = require('inspector');
 const { all } = require('./routes/users.js');
 app.use('/users', userRouter)
+
+
+function updateDailyTrial(user_id){
+    return new Promise((resolve, reject) => {
+        db.query(
+            'UPDATE users SET DailyTrial = 1 WHERE user_id = ?',
+            [user_id],
+            function(err){
+                if(err){
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            }
+        )
+    })
+}
+
+function updateWPM(user_id, right){
+    return new Promise ((resolve, reject) => {
+        db.query(
+            'UPDATE users SET wpm = ? WHERE user_id = ?',
+            [right, user_id],
+            function(err){
+                if (err) {
+                    reject(err)
+                } else {
+                    console.log('updated wpm in database')
+                    resolve();
+                }
+            }
+        )
+    })
+}
+
+function getFriendsList(user_id){
+    return new Promise ((resolve, reject) => {
+        db.query(
+            'SELECT * FROM friends WHERE (user_first_id = ? OR user_second_id = ?) AND (type = ?);',
+            [[user_id], [user_id], 'friends'],
+            function(err, result){
+                if(err){
+                    reject(err)
+                } else {
+                    resolve(result)
+                }
+            }
+        )
+    })
+}
 
 const port = process.env.port || 8080;
 app.listen(port, () => {

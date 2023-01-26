@@ -60,6 +60,8 @@ router.post('/login', (req, res) => {
             if (results.length > 0) {
                 req.session.isAuth = true;
                 req.session.user = username;
+                req.session.user_id = results[0].user_id;
+                req.session.dailyTrial = results[0].DailyTrial;
                 res.redirect('/dashboard');
                 console.log('login successful');
                 console.log("user route" + req.session.user)
