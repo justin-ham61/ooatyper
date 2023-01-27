@@ -453,7 +453,10 @@ app.get('/leaderboard', async (req, res) => {
         })
     }
 
-    friendsData.reverse
+    friendsData.sort(function(a, b) {
+        return b.result[0].wpm - a.result[0].wpm;
+    });
+
     console.log(friendsData[0].result[0].wpm)
     console.log('this is the result')
     console.log(friends)
