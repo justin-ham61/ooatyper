@@ -335,7 +335,6 @@ letter {
 }
 
 .leaderboard {
-
     border-style: solid;
     padding: 10px;
     border-radius: 10px;
@@ -355,6 +354,19 @@ letter {
     text-align: center;
 }
 
+.timer-box {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+#timer,
+.timer {
+    margin: 5px;
+    color: #888888;
+    font-size: 30px;
+}
 @keyframes blinker {
     50% {
       opacity: .1;

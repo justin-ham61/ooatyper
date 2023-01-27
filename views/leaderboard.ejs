@@ -6,8 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <script>
+        function timerfunc(){
+            const interval = setInterval(function() {
+            var time = new Date();
+            let timer = document.getElementById('timer')
+            let formatNum = []
+            console.log(time)
+            formatNum[0] = 24 - time.getHours();
+            formatNum[1] = 59 - time.getMinutes();
+            formatNum[2] = 59 - time.getSeconds();
+            [formatNum[0], formatNum[1], formatNum[2]].forEach(myNumber => {
+                let formattedNumber = myNumber.toLocaleString('en-US', {
+                    minimumIntegerDigits: 2,
+                    useGrouping: false
+                })
+                formatNum.push(formattedNumber)
+            })
+            timer.innerHTML = formatNum[3] + ":" + formatNum[4] + ":" + formatNum[5];
+            }, 1000);
+        }
+    </script>
 </head>
-<body>
+<body onload="timerfunc()">
     <div class="header">
         <a href="/dashboard">Typer Challenge</a>
         <div class="right-header">
@@ -18,6 +39,10 @@
                 <button id="logout-button">LOGOUT</button>
             </form>
         </div>
+    </div>
+    <div class="timer-box">
+        <p class="timer">Time Remaining</p>
+        <p id="timer">13:45:11</p>
     </div>
     <div class="leaderboard-box">
         <table class="leaderboard">
