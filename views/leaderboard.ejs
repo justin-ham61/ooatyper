@@ -32,7 +32,7 @@
     <div class="header">
         <a href="/dashboard">Typer Challenge</a>
         <div class="right-header">
-            <a href="">ACCOUNT</a>
+            <a href="/group">GROUP</a>
             <a href="leaderboard">LEADERBOARD</a>
             <a href="/friendslist">FRIENDS</a>
             <form action="/logout" method="POST">
@@ -45,7 +45,7 @@
         <p id="timer">13:45:11</p>
     </div>
     <div class="leaderboard-box">
-        <table class="leaderboard">
+        <table class="leaderboard" cellspacing="0">
             <tr class="leaderboard-row">
                 <th>Username</th>
                 <th>Today's WPM</th>
@@ -53,8 +53,8 @@
             </tr>
             <% if (friendsData.length > 0) { %> 
                 <% for (let i = 0; i < friendsData.length; i++) { %> 
-                    <tr class="leaderboard-row">
-                        <td><%- friendsData[i].result[0].username %> </td>
+                    <tr class='leaderboard-row' data-place="<%- i %>">
+                        <td class="table-username"><%- friendsData[i].result[0].username %> </td>
                         <td><%- friendsData[i].result[0].wpm %> </td>
                         <td><%- friendsData[i].result[0].wins %> </td>
                     </tr>

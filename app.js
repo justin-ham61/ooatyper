@@ -432,26 +432,13 @@ app.get('/leaderboard', async (req, res) => {
         }
     }
 
+    friends.push(user_id)
+
     for (let i = 0; i < friends.length; i++){
-        let result = await getFriendsData(friends[i])
+        let result = await getUserData(friends[i])
         friendsData.push({result : result})
     }
 
-    function getFriendsData(user_id){
-        return new Promise ((resolve, reject) => {
-            db.query(
-                'SELECT * FROM users WHERE user_id = ?',
-                [user_id],
-                function(err, result){
-                    if(err){
-                        reject(err)
-                    } else {
-                        resolve(result);
-                    }
-                }
-            )
-        })
-    }
 
     friendsData.sort(function(a, b) {
         return b.result[0].wpm - a.result[0].wpm;
@@ -459,8 +446,69 @@ app.get('/leaderboard', async (req, res) => {
     res.render('leaderboard', {friendsData : friendsData})
 })
 
+app.get('/group', async (req, res) => {
+    let user_id = req.session.user_id;
+    let userData = await getUserData(user_id);
+    let groupMembers = await getGroupMembers(userData[0].GroupName);
+    let groupMemberId = [];
+    let groupMemberData = [];
+    if (userData[0].GroupName == 'No Group'){
+        res.render('group', {userData : userData, groupMemberData : groupMemberData})
+    } else {
+        for (let i = 0; i < groupMembers.length; i++){
+            groupMemberId[i] = groupMembers[i].user_id
+        }
+        for (let i = 0; i < groupMemberId.length; i++){
+            let result = await getUserData(groupMemberId[i])
+            groupMemberData.push({result : result})
+        }
+        groupMemberData.sort(function(a, b) {
+            return b.result[0].wpm - a.result[0].wpm;
+        });
+        res.render('group', {userData : userData, groupMemberData : groupMemberData})
+    }   
+})
 
+app.post('/addGroup', async (req, res) => {
+    let user_id = req.session.user_id;
+    let groupName = req.body.groupName
 
+    let result = await checkGroupName(groupName);
+
+    if (result.length > 0){
+        res.redirect('/group')
+    } else {
+        console.log(result.length);
+        let userData = await getUserData(user_id)
+        if (userData[0].GroupName == 'No Group'){
+            let groupStatus = 0;
+            await insertGroup(user_id, groupName)
+            res.redirect('/group')
+        } else {
+            let groupStatus = 1;
+            res.redirect('/group');
+        }
+    }
+})
+
+app.post('/joinGroup', async (req, res) => {
+    let user_id = req.session.user_id;
+    let groupName = req.body.groupName1;
+
+    let result = await checkGroupName(groupName);
+    console.log(result.length)
+    if (result.length == 0){
+        res.redirect('/group')
+    } else {
+        let userData = await getUserData(user_id)
+        if (userData[0].GroupName == 'No Group'){
+            await insertGroup(user_id, groupName)
+            res.redirect('/group')
+        } else {
+            res.redirect('/group')
+        }
+    }
+})
 //renders login page
 app.get('/login', (req, res) => {
     res.render('login')
@@ -484,6 +532,7 @@ const { rejects } = require('assert');
 const { request } = require('express');
 const { waitForDebugger } = require('inspector');
 const { all } = require('./routes/users.js');
+const { promiseImpl } = require('ejs');
 app.use('/users', userRouter)
 
 
@@ -536,6 +585,69 @@ function getFriendsList(user_id){
     })
 }
 
+function getUserData(user_id){
+    return new Promise ((resolve, reject) => {
+        db.query(
+            'SELECT * FROM users WHERE user_id = ?',
+            [user_id],
+            function(err, result){
+                if(err){
+                    reject(err)
+                } else {
+                    resolve(result);
+                }
+            }
+        )
+    })
+}
+
+function insertGroup(user_id, groupName){
+    return new Promise ((resolve, reject) => {
+        db.query(
+            'UPDATE users SET GroupName = ? WHERE user_id = ?',
+            [groupName, user_id],
+            function(err){
+                if (err){
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            }
+        )
+    })
+}
+
+function checkGroupName(groupName){
+    return new Promise ((resolve, reject) => {
+        db.query(
+            'SELECT GroupName FROM users WHERE GroupName = ?',
+            [groupName],
+            function (err, result){
+                if (err){
+                    reject(err)
+                } else {
+                    resolve(result)
+                }
+            }
+        )
+    })
+}
+
+function getGroupMembers(groupName){
+    return new Promise ((resolve, reject) => {
+        db.query(
+            'SELECT user_id FROM users WHERE GroupName = ?',
+            [groupName],
+            function(err, result){
+                if(err){
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            }
+        )
+    })
+}
 const port = process.env.port || 8080;
 app.listen(port, () => {
     console.log(`server is running on localhost:${port}`);
