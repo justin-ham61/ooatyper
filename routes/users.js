@@ -40,36 +40,26 @@ router.post('/add', async (req, res) => {
         res.redirect('/register')
         }
     }
-    function checkUsername(username){
-        return new Promise ((resolve, reject) => {
-            db.query(
-                'SELECT * FROM users WHERE username = ?',
-                [username],
-                function(err, result){
-                    if (err){
-                        reject(err)
-                    } else {
-                        resolve(result)
-                        }
-                    }
-                )
-            })
-        }
 })
 
 router.post('/login', async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
-    if (username.length > 1){
-        let hash = await getHash(username);
-        console.log(hash)
-        bcrypt.compare(password, hash[0].hash, function(err, result){
-            if (result){
-                login(username);
-            } else {
-                res.redirect('/login')
-            }
-        })
+    let result = await checkUsername(username)
+    if (result.length > 0){
+        if (username.length > 1){
+            let hash = await getHash(username);
+            console.log(hash)
+            bcrypt.compare(password, hash[0].hash, function(err, result){
+                if (result){
+                    login(username);
+                } else {
+                    res.redirect('/login')
+                }
+            })
+        } else {
+            res.redirect('/login')
+        }
     } else {
         res.redirect('/login')
     }
@@ -118,6 +108,21 @@ router.post('/login', async (req, res) => {
     }
 });
 
+function checkUsername(username){
+    return new Promise ((resolve, reject) => {
+        db.query(
+            'SELECT * FROM users WHERE username = ?',
+            [username],
+            function(err, result){
+                if (err){
+                    reject(err)
+                } else {
+                    resolve(result)
+                    }
+                }
+            )
+        })
+    }
 
 
 module.exports = router;
