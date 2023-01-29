@@ -35,10 +35,9 @@ router.post('/add', async (req, res) => {
                 console.log("New user has been added");
             }
             )
-    }
-    else {
-        res.redirect('/register')
         }
+    } else {
+        res.redirect('/register')
     }
 })
 
@@ -60,9 +59,11 @@ router.post('/login', async (req, res) => {
         } else {
             res.redirect('/login')
         }
+
     } else {
         res.redirect('/login')
     }
+
     function getHash(username) {
         return new Promise ((resolve, reject) => {
             db.query(
