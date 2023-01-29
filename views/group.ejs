@@ -30,11 +30,12 @@
             <input type="text" placeholder="Group name" name="groupName1">
             <button type="submit">Join Group</button>
         </form>
-        <table>
-            <tr>
-                <th><p>Group name: <span style="color: red;"><%- userData[0].GroupName %></span> </p></th>
-            </tr>
-        </table>
+        <div class="group-info">
+            <p>Group name: <span style="color: red;"><%- userData[0].GroupName %></span> </p>
+            <form action="/leaveGroup" method="POST">
+                <button class="leave-group-button">leave Group</button>
+            </form>     
+        </div>
         <div class="leaderboard-box">
             <table class="leaderboard" cellspacing="0">
                 <tr class="leaderboard-row">

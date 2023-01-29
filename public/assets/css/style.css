@@ -119,11 +119,13 @@ div.login {
     background-color: rgb(120, 120, 252);
 }
 
-.deleteButton {
+.deleteButton,
+.leave-group-button {
     background-color: rgb(255, 65, 65);
 }
 
-.deleteButton:hover {
+.deleteButton:hover,
+.leave-group-button:hover {
     background-color: hotpink;
 }
 
@@ -373,16 +375,18 @@ letter {
 
 tr[data-place="0"] td{
     background-color: gold;
+    transition: .2s;
 }
 
 tr[data-place="1"] td{
     background-color: silver;
+    transition: .2s;
 }
 
 tr[data-place="2"] td{
     background-color: burlywood;
+    transition: .2s;
 }
-
 
 .timer-box {
     display: flex;
@@ -404,6 +408,23 @@ tr[data-place="2"] td{
     flex-direction: column;
     align-items: center;
     gap: 5px;
+}
+
+.group-info {
+    margin: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.leave-group-button{
+    border-style: none;
+    height: 35px;
+    width: 200px;
+    color: white;
+    border-radius: 5px;
+    transition: .2s;
+    font-size: 15px;
 }
 
 @keyframes blinker {

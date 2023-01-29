@@ -5,9 +5,11 @@ const path = require("path");
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 let mysql = require('mysql');
-const morgan = require('morgan')
-const async = require('async')
-
+const morgan = require('morgan');
+const http = require('http');
+const https = require('https');
+const fs = require('fs');
+const async = require('async');
 
 
 //middleware for bodyparse
@@ -53,6 +55,7 @@ const isAuth = (req, res, next) => {
 app.get('/',(req, res) => {
     res.redirect('/login')
 })
+
 
 app.get('/register', (req, res) => {
     res.render('register');
@@ -500,14 +503,30 @@ app.post('/joinGroup', async (req, res) => {
     if (result.length == 0){
         res.redirect('/group')
     } else {
-        let userData = await getUserData(user_id)
-        if (userData[0].GroupName == 'No Group'){
-            await insertGroup(user_id, groupName)
-            res.redirect('/group')
-        } else {
-            res.redirect('/group')
-        }
+        await insertGroup(user_id, groupName)
+        res.redirect('/group')
     }
+})
+
+app.post('/leaveGroup', async (req, res) => {
+    let user_id = req.session.user_id;
+    await leaveGroup(user_id)
+    function leaveGroup(user_id){
+        return new Promise ((resolve, reject) => {
+          db.query(
+            'UPDATE users SET GroupName = ? WHERE user_id = ?',
+            ['No Group', user_id],
+            function (err){
+                if (err){
+                    reject(err)
+                } else {
+                    resolve()
+                    }
+                }
+            )
+        })
+    }
+    res.redirect('/group');
 })
 //renders login page
 app.get('/login', (req, res) => {
