@@ -667,7 +667,7 @@ function getGroupMembers(groupName){
         )
     })
 }
-const port = process.env.port || 80;
+const port = process.env.PORT;
 app.listen(port, () => {
     console.log(`server is running on localhost:${port}`);
 })
