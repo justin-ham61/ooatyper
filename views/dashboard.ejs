@@ -79,6 +79,7 @@
         wpm.innerHTML = `WPM: ${right}`;
         wpm.style.display = 'block'
         updateWPM(right);
+
     }
 
     function updateWPM(right) {
@@ -355,6 +356,9 @@
         </div>
         <div id="summary">
             <p id="wpm"></p>
+            <form action="/group">
+                <button type="submit" class="test-finish-btn">Go To Group Leaderboard</button>
+            </form>
         </div>
     </div>
 </body>

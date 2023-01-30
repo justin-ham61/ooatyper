@@ -94,7 +94,8 @@ div.login {
 
 .sign-up > form > button,
 #addFriends > form > button,
-.group-box > form > button {
+.group-box > form > button,
+.test-finish-btn {
     background-color: rgb(120, 120, 252);
     border: none;
     height: 50px;
@@ -108,7 +109,8 @@ div.login {
 .sign-up > form > button:hover,
 #addFriends > form > button:hover,
 .acceptButton:hover,
-.group-box > form > button:hover {
+.group-box > form > button:hover,
+.test-finish-btn:hover {
     background-color: rgb(164, 164, 252);
 }
 

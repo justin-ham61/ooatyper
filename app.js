@@ -241,7 +241,7 @@ app.get('/register', (req, res) => {
 })
 
 
-app.get('/dashboard', isAuth, (req, res) => {
+app.get('/dashboard', isAuth, async (req, res) => {
     var passage = "a red cat sat on a mat the hat was big and fat a pen sat next to a rat the dog dug a hole in the grass a bat flew by at dusk a mug held hot tea a map showed the way a tag had a name a wag sign said welcome a red cat sat on a mat the hat was big and fat a pen sat next to a rat the dog dug a hole in the grass a bat flew by at dusk a mug held hot tea a map showed the way a tag had a name a wag sign said welcome a red cat sat on a mat the hat was big and fat a pen sat next to a rat the dog dug a hole in the grass a bat flew by at dusk a mug held hot tea a map showed the way a tag had a name a wag sign said welcome"
     //creates an array of all the words, but we need a dictionary where 1 = array of characters in word 
     var words = passage.split(" ")
@@ -251,7 +251,14 @@ app.get('/dashboard', isAuth, (req, res) => {
         characters[i] = words[i].split("")
     }
     const count = words.length
-    res.render('dashboard', {passage : passage, count : count, characters : characters});
+    let user_id = req.session.user_id
+    let result = await getUserData(user_id)
+    if (result[0].DailyTrial == 0){
+        res.render('dashboard', {passage : passage, count : count, characters : characters});
+    } else {
+        res.redirect('/group')
+    }
+    
 })
 
 app.get('/friendslist', isAuth, async (req, res) => {
