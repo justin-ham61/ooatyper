@@ -53,14 +53,188 @@ const isAuth = (req, res, next) => {
     }
 };
 
-const job = schedule.scheduleJob('7 * * * *', () => {
-    console.log('it is 9:05')
+const updateDailyVariables = schedule.scheduleJob('8 * * *', async () => {
+    console.log('it is midnight')
+    let groups = await getGroups();
+    console.log(groups)
+    let newGroups = [];
+    for (let i = 0; i < groups.length; i++) {
+        newGroups.push(groups[i].GroupName);
+    }
+
+    console.log(newGroups)
+    
+    for (let i = 0; i < newGroups.length; i++) {
+        let groupMemberData = await getGroupMembers(newGroups[i])
+        groupMemberData.sort(function(a, b){
+            return b.wpm - a.wpm
+        })
+        await giveWin(groupMemberData[0].user_id)
+        console.log(groupMemberData[0].wpm)
+    }
+
+    await clearWPM();
+
+    function giveWin(user_id){
+        return new Promise ((resolve, reject) => {
+            db.query(
+                'UPDATE users SET wins = wins + 1 WHERE user_id = ?;',
+                [user_id],
+                function (err, result){
+                    if (err) {
+                        reject(err)
+                    } else {
+                        console.log('gave win to' + user_id)
+                        resolve();
+                    }
+                }
+            )
+        })
+    }
+
+    function getGroupMembers(newGroup){
+        return new Promise ((resolve, reject) => {
+            db.query(
+                'SELECT * FROM users WHERE GroupName = ?',
+                [newGroup],
+                function (err, result){
+                    if (err){
+                        reject(err);
+                    } else {
+                        resolve(result)
+                    }  
+                } 
+            )
+        })
+    }
+
+    function getGroups() {
+        return new Promise ((resolve, reject) => {
+            db.query(
+                'SELECT DISTINCT GroupName FROM users;',
+                function(err, result){
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                }
+            )
+        })
+    }
+
+    function clearWPM() {
+        return new Promise ((resolve, reject) => {
+            db.query(
+                'UPDATE users SET wpm = ?, DailyTrial = ?;',
+                [0, 0],
+                function (err, result){
+                    if (err){
+                        reject(err)
+                    } else {
+                        resolve()
+                    }
+                }
+            )
+        })
+    }
 })
 
 app.get('/',(req, res) => {
     res.redirect('/login')
 })
 
+app.get('/test', (req, res) => {
+    res.render('test')
+})
+
+app.post('/updateDatabase', async (req, res) => {
+    console.log('it is midnight')
+    let groups = await getGroups();
+    console.log(groups)
+    let newGroups = [];
+    for (let i = 0; i < groups.length; i++) {
+        newGroups.push(groups[i].GroupName);
+    }
+
+    console.log(newGroups)
+    
+    for (let i = 0; i < newGroups.length; i++) {
+        let groupMemberData = await getGroupMembers(newGroups[i])
+        groupMemberData.sort(function(a, b){
+            return b.wpm - a.wpm
+        })
+        await giveWin(groupMemberData[0].user_id)
+        console.log(groupMemberData[0].wpm)
+    }
+
+    await clearWPM();
+    res.redirect('/test')
+
+    function giveWin(user_id){
+        return new Promise ((resolve, reject) => {
+            db.query(
+                'UPDATE users SET wins = wins + 1 WHERE user_id = ?;',
+                [user_id],
+                function (err, result){
+                    if (err) {
+                        reject(err)
+                    } else {
+                        console.log('gave win to' + user_id)
+                        resolve();
+                    }
+                }
+            )
+        })
+    }
+
+    function getGroupMembers(newGroup){
+        return new Promise ((resolve, reject) => {
+            db.query(
+                'SELECT * FROM users WHERE GroupName = ?',
+                [newGroup],
+                function (err, result){
+                    if (err){
+                        reject(err);
+                    } else {
+                        resolve(result)
+                    }  
+                } 
+            )
+        })
+    }
+
+    function getGroups() {
+        return new Promise ((resolve, reject) => {
+            db.query(
+                'SELECT DISTINCT GroupName FROM users;',
+                function(err, result){
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                }
+            )
+        })
+    }
+
+    function clearWPM() {
+        return new Promise ((resolve, reject) => {
+            db.query(
+                'UPDATE users SET wpm = ?, DailyTrial = ?;',
+                [0, 0],
+                function (err, result){
+                    if (err){
+                        reject(err)
+                    } else {
+                        resolve()
+                    }
+                }
+            )
+        })
+    }
+})
 
 app.get('/register', (req, res) => {
     res.render('register', { message : req.flash('message')});
@@ -455,10 +629,12 @@ app.get('/leaderboard', async (req, res) => {
         friendsData.push({result : result})
     }
 
+    console.log(friendsData)
 
     friendsData.sort(function(a, b) {
         return b.result[0].wpm - a.result[0].wpm;
     });
+
     res.render('leaderboard', {friendsData : friendsData})
 })
 
