@@ -326,7 +326,7 @@
 
     </script>
 </head>
-<body class="dashboard" onload="dailyTrial()">
+<body class="dashboard">
     <div class="header">
         <a href="/dashboard">Typer Challenge</a>
         <div class="right-header">
@@ -342,7 +342,7 @@
     <p id="countdown">60</p>
     <div id="testArea">
         <div id="wrapper">
-            <button id="startBtn" class="btn" onclick="startTest(), startTimer()">Begin Test</button>
+            <button id="startBtn" class="btn" onclick="startTest(), startTimer(), dailyTrial()">Begin Test</button>
             <div id="caret" class="visible"></div>
             <div id="words">
                 <% for (var i = 0; i < count; i++) { %>
