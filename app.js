@@ -53,7 +53,7 @@ const isAuth = (req, res, next) => {
     }
 };
 
-const job = schedule.scheduleJob('5 * * * *', () => {
+const job = schedule.scheduleJob('7 * * * *', () => {
     console.log('it is 9:05')
 })
 
