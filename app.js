@@ -53,7 +53,7 @@ const isAuth = (req, res, next) => {
     }
 };
 
-const updateDailyVariables = schedule.scheduleJob('8 * * *', async () => {
+const updateDailyVariables = schedule.scheduleJob('0 0 8 * * *', async () => {
     console.log('it is midnight')
     let groups = await getGroups();
     console.log(groups)
