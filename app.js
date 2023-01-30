@@ -6,7 +6,8 @@ const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 let mysql = require('mysql');
 const morgan = require('morgan');
-const flash = require('connect-flash')
+const flash = require('connect-flash');
+const schedule = require('node-schedule');
 const async = require('async');
 
 
@@ -42,7 +43,6 @@ app.use(session({
 
 app.use(flash());
 
-
 //creates authorization requirement to access page
 const isAuth = (req, res, next) => {
     if(req.session.isAuth) {
@@ -53,6 +53,9 @@ const isAuth = (req, res, next) => {
     }
 };
 
+const job = schedule.scheduleJob('5 * * * *', () => {
+    console.log('it is 9:05')
+})
 
 app.get('/',(req, res) => {
     res.redirect('/login')
