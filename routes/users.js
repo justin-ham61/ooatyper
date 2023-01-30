@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 let mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const flash = require('connect-flash')
 const e = require('express');
 
 
@@ -20,23 +21,33 @@ db.connect(function(err){
     console.log('Connected to the MySql server.');
 })
 
+
 router.post('/add', async (req, res) => {
     let result = await checkUsername(req.body.username)
     if (result.length == 0){
-        if (req.body.password === req.body.password1 && req.body.password.length >= 8){
-            bcrypt.hash(req.body.password, 10, function(err, hash){
-                let sql = 'INSERT INTO users(username, hash) VALUES (?);'
-                let values = [req.body.username, hash];
-                db.query(sql, [values], function (err, result) {
-                    if (err) throw err;
-                    console.log("Number of records inserted: " + result.affectedRows);
-                });
-                res.redirect('/login');
-                console.log("New user has been added");
+        if (req.body.password === req.body.password1){
+            if (req.body.password.length >= 8){
+                bcrypt.hash(req.body.password, 10, function(err, hash){
+                    let sql = 'INSERT INTO users(username, hash) VALUES (?);'
+                    let values = [req.body.username, hash];
+                    db.query(sql, [values], function (err, result) {
+                        if (err) throw err;
+                        console.log("Number of records inserted: " + result.affectedRows);
+                    });
+                    req.flash('message', 'Successfully Registered')
+                    res.redirect('/login');
+                    console.log("New user has been added");
+                })
+            } else {
+                req.flash('message', 'Password Must Be 8 or More Characters')
+                res.redirect('/register')
             }
-            )
+        } else {
+            req.flash('message', 'Passwords Do Not Match')
+            res.redirect('/register')
         }
     } else {
+        req.flash('message', 'Username Already Exists')
         res.redirect('/register')
     }
 })
@@ -44,26 +55,48 @@ router.post('/add', async (req, res) => {
 router.post('/login', async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
-    let result = await checkUsername(username)
-    if (result.length > 0){
-        if (username.length > 1){
-            let hash = await getHash(username);
-            console.log(hash)
-            bcrypt.compare(password, hash[0].hash, function(err, result){
+    if (username.length > 0){
+        if (password.length > 0){
+            let result = await checkUsername(username)
+            if (result.length > 0){
+                let hash = await getHash(username);
+                console.log(hash)
+                let result = await verifyUser(password, hash[0].hash)
+                console.log(result)
                 if (result){
-                    login(username);
-                } else {
+                    await login(username);
+                } else if (!result) {
+                    req.flash('message', 'Incorrect')
+                    console.log('1')
                     res.redirect('/login')
                 }
-            })
+            } else {
+                req.flash('message', 'Username Does Not Exist')
+                console.log('2')
+                res.redirect('/login')
+            }
         } else {
+            req.flash('message', 'Please Enter a Password')
+            console.log('3')
             res.redirect('/login')
         }
-
     } else {
+        req.flash('message', 'Please Enter a Username')
+        console.log('4')
         res.redirect('/login')
     }
 
+    function verifyUser(password, hash){
+        return new Promise ((resolve, reject) => {
+            bcrypt.compare(password, hash, function(err, result){
+                if (err){
+                    reject(err)
+                } else {
+                    resolve(result)
+                }
+            })
+        })
+    }
     function getHash(username) {
         return new Promise ((resolve, reject) => {
             db.query(
@@ -101,6 +134,7 @@ router.post('/login', async (req, res) => {
                         resolve();
                     } else {
                         console.log('login failed');
+
                         resolve();
                     }
                 }    

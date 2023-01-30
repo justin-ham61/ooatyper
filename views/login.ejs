@@ -23,6 +23,9 @@
             <input type="text" placeholder="Username" name="username">
             <input type="password" placeholder="Password" name="password">
         </div>
+        <% if (message) { %> 
+            <div class="flash-error"> <%= message  %> </div>
+        <% } %> 
         <div class="flexbox">
             <button  class="submit"><i class="arrow right"></i></button>
         </div>

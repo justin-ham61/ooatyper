@@ -24,16 +24,25 @@
             <p>Group Creation</p>
             <input type="text" placeholder="Group name" name="groupName">
             <button type="submit">Create Group</button>
+            <% if (messageadd) { %> 
+                <div class="flash-error"> <%= messageadd  %> </div>
+            <% } %> 
         </form>
         <form action="/joinGroup" method="POST">
             <p>Join Group</p>
             <input type="text" placeholder="Group name" name="groupName1">
             <button type="submit">Join Group</button>
+            <% if (messagejoin) { %> 
+                <div class="flash-error"> <%= messagejoin  %> </div>
+            <% } %> 
         </form>
         <div class="group-info">
             <p>Group name: <span style="color: red;"><%- userData[0].GroupName %></span> </p>
             <form action="/leaveGroup" method="POST">
                 <button class="leave-group-button">leave Group</button>
+                <% if (messageleave) { %> 
+                    <div class="flash-error"> <%= messageleave  %> </div>
+                <% } %> 
             </form>     
         </div>
         <div class="leaderboard-box">

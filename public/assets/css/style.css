@@ -17,6 +17,12 @@ a, p {
     transition: .2s;
 }
 
+.flash-error {
+    color: rgb(255, 30, 30);
+    text-align: center;
+    margin: 10px;
+}
+
 a:hover,
 #logout-button:hover {
     color: white;

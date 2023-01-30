@@ -64,6 +64,9 @@
         <form action="/sendfriendrequest" method="POST">
             <input type="text" placeholder="Username" name="friendRequestName">
             <button>Send Friend Request</button>
+            <% if (message) { %> 
+                <div class="flash-error"> <%= message  %> </div>
+            <% } %> 
         </form>
         <div>
             <div class="listBox">

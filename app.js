@@ -6,10 +6,9 @@ const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 let mysql = require('mysql');
 const morgan = require('morgan');
-const http = require('http');
-const https = require('https');
-const fs = require('fs');
+const flash = require('connect-flash')
 const async = require('async');
+
 
 
 //middleware for bodyparse
@@ -41,6 +40,8 @@ app.use(session({
     })
 );
 
+app.use(flash());
+
 
 //creates authorization requirement to access page
 const isAuth = (req, res, next) => {
@@ -52,13 +53,14 @@ const isAuth = (req, res, next) => {
     }
 };
 
+
 app.get('/',(req, res) => {
     res.redirect('/login')
 })
 
 
 app.get('/register', (req, res) => {
-    res.render('register');
+    res.render('register', { message : req.flash('message')});
 })
 
 
@@ -181,7 +183,7 @@ app.get('/friendslist', isAuth, async (req, res) => {
     console.log(friendsList)
     count = requestedUsernames.length;
     friendListCount = friendsListNames.length
-    res.render('friendslist', {requestedUsernames : requestedUsernames, count : count, friendsListNames : friendsListNames, friendListCount : friendListCount})
+    res.render('friendslist', {requestedUsernames : requestedUsernames, count : count, friendsListNames : friendsListNames, friendListCount : friendListCount, message : req.flash('message')})
     console.log('pageloaded')
 })
 
@@ -219,9 +221,10 @@ app.post('/sendfriendrequest', isAuth, (req, res) => {
                 function (err, result){
                     if (err) throw err;
                     if (result.length == 0){
+                        req.flash('message', 'Username Does Not Exist')
                         console.log('user does not exist')
-                    }
-                    else if (result.length > 0) {
+                        res.redirect('/friendslist')
+                    } else if (result.length > 0) {
                         friendRequestId = result[0].user_id;
                         console.log("friend user ID: " + friendRequestId)
                         db.query(
@@ -236,17 +239,25 @@ app.post('/sendfriendrequest', isAuth, (req, res) => {
                                         'INSERT INTO friends VALUES (?);',
                                         [[currentUserId, friendRequestId, 'user12']]
                                     )
+                                    req.flash('message', 'Friend Request Sent')
+                                    res.redirect('/friendslist')
                                 }
                                 else if (result.length > 0){
                                     let friendType = result[0].type;
                                     if (friendType == 'friends'){
+                                        req.flash('message', 'Already Friends')
                                         console.log('Already Friends')
+                                        res.redirect('/friendslist')
                                     }
                                     else if(friendType == 'user12' || friendType == 'user21'){
+                                        req.flash('message', 'Friend Request Pending')
                                         console.log('Pending Friend Request')
+                                        res.redirect('/friendslist')
                                     }
                                     else if (friendType == 'norelation'){
+                                        req.flash('message', 'No Longer Friends')
                                         console.log('No longer friends')
+                                        res.redirect('/friendslist')
                                     }
                                 }
                             }
@@ -267,7 +278,6 @@ app.post('/sendfriendrequest', isAuth, (req, res) => {
             //console.log(x);
         //}
     //)
-    res.redirect('/friendslist')
 })
 
 app.post('/friendslist/acceptFriendRequest', async (req,res) => {
@@ -456,7 +466,7 @@ app.get('/group', async (req, res) => {
     let groupMemberId = [];
     let groupMemberData = [];
     if (userData[0].GroupName == 'No Group'){
-        res.render('group', {userData : userData, groupMemberData : groupMemberData})
+        res.render('group', {userData : userData, groupMemberData : groupMemberData, messagejoin : req.flash('message-join'), messageadd : req.flash('message-add'), messageleave : req.flash('message-leave')})
     } else {
         for (let i = 0; i < groupMembers.length; i++){
             groupMemberId[i] = groupMembers[i].user_id
@@ -468,7 +478,7 @@ app.get('/group', async (req, res) => {
         groupMemberData.sort(function(a, b) {
             return b.result[0].wpm - a.result[0].wpm;
         });
-        res.render('group', {userData : userData, groupMemberData : groupMemberData})
+        res.render('group', {userData : userData, groupMemberData : groupMemberData, messagejoin : req.flash('message-join'), messageadd : req.flash('message-add'), messageleave : req.flash('message-leave')})
     }   
 })
 
@@ -486,9 +496,10 @@ app.post('/addGroup', async (req, res) => {
         if (userData[0].GroupName == 'No Group'){
             let groupStatus = 0;
             await insertGroup(user_id, groupName)
+            req.flash('message-add', `Successfully Added Group: ${groupName}`)
             res.redirect('/group')
         } else {
-            let groupStatus = 1;
+            req.flash('message-add', 'Group Already Exists')
             res.redirect('/group');
         }
     }
@@ -501,9 +512,11 @@ app.post('/joinGroup', async (req, res) => {
     let result = await checkGroupName(groupName);
     console.log(result.length)
     if (result.length == 0){
+        req.flash('message-join', 'Group Does Not Exist')
         res.redirect('/group')
     } else {
         await insertGroup(user_id, groupName)
+        req.flash('message-join', `Successfully Joined Group: ${groupName}`)
         res.redirect('/group')
     }
 })
@@ -526,11 +539,12 @@ app.post('/leaveGroup', async (req, res) => {
             )
         })
     }
+    req.flash('message-leave', 'Successfully Left Group')
     res.redirect('/group');
 })
 //renders login page
 app.get('/login', (req, res) => {
-    res.render('login')
+    res.render('login', { message : req.flash('message')})
 })
 
 //logout by destorying session 
@@ -667,7 +681,7 @@ function getGroupMembers(groupName){
         )
     })
 }
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`server is running on localhost:${port}`);
 })

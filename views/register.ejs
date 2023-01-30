@@ -21,6 +21,9 @@
             <input type="text" placeholder="Username" name="username" required>
             <input type="password" placeholder="Password" name="password" required>
             <input type="password" placeholder="Re-Enter Password" name="password1" required>
+            <% if (message) { %> 
+                <div class="flash-error"> <%= message  %> </div>
+            <% } %> 
             <button type="submit">Sign up</button>
         </form>
     </div>
