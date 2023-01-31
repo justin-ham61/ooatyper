@@ -10,7 +10,7 @@
     gap: 15px;
 }
 
-a, p {
+a, p{
     text-decoration: none;
     color: #888888;
     font-size: 20px;
@@ -27,6 +27,32 @@ a:hover,
 #logout-button:hover {
     color: white;
 }
+
+.guide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.guide-box{
+    width: 1000px;
+    height: 400px;
+    background-color: #777777;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    margin-top: 50px;
+}
+
+li, ol {
+    background-color: #777777;
+    color: white;
+    font-weight: bold;
+    font-size: 25px;
+    padding-top: 20px;
+}
+
+
 
 #logout-button {
     text-decoration: none;
@@ -52,8 +78,11 @@ a:hover,
     margin: 20px;
 }
 
-.logo {
-    padding: 100px;
+.logo-box {
+    display: flex;
+    justify-content: center;
+    padding-top: 150px;
+    gap: 5px;
     text-align: center;
     margin: 30px;
     font-size: 100px;

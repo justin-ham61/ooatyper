@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 let mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const request = require('request')
 const flash = require('connect-flash')
 const e = require('express');
 
@@ -21,36 +22,36 @@ db.connect(function(err){
     console.log('Connected to the MySql server.');
 })
 
-
 router.post('/add', async (req, res) => {
-    let result = await checkUsername(req.body.username)
-    if (result.length == 0){
-        if (req.body.password === req.body.password1){
-            if (req.body.password.length >= 8){
-                bcrypt.hash(req.body.password, 10, function(err, hash){
-                    let sql = 'INSERT INTO users(username, hash) VALUES (?);'
-                    let values = [req.body.username, hash];
-                    db.query(sql, [values], function (err, result) {
-                        if (err) throw err;
-                        console.log("Number of records inserted: " + result.affectedRows);
-                    });
-                    req.flash('message', 'Successfully Registered')
-                    res.redirect('/login');
-                    console.log("New user has been added");
-                })
+        let result = await checkUsername(req.body.username)
+        if (result.length == 0){
+            if (req.body.password === req.body.password1){
+                if (req.body.password.length >= 8){
+                    bcrypt.hash(req.body.password, 10, function(err, hash){
+                        let sql = 'INSERT INTO users(username, hash) VALUES (?);'
+                        let values = [req.body.username, hash];
+                        db.query(sql, [values], function (err, result) {
+                            if (err) throw err;
+                            console.log("Number of records inserted: " + result.affectedRows);
+                        });
+                        req.flash('message', 'Successfully Registered')
+                        res.redirect('/login');
+                        console.log("New user has been added");
+                    })
+                } else {
+                    req.flash('message', 'Password Must Be 8 or More Characters')
+                    res.redirect('/register')
+                }
             } else {
-                req.flash('message', 'Password Must Be 8 or More Characters')
+                req.flash('message', 'Passwords Do Not Match')
                 res.redirect('/register')
             }
         } else {
-            req.flash('message', 'Passwords Do Not Match')
+            req.flash('message', 'Username Already Exists')
             res.redirect('/register')
         }
-    } else {
-        req.flash('message', 'Username Already Exists')
-        res.redirect('/register')
-    }
-})
+});
+
 
 router.post('/login', async (req, res) => {
     let username = req.body.username;

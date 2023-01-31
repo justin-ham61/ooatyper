@@ -4,28 +4,30 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Register</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcnMD0kAAAAAPjwwGtcIGrM3jOGWE7_M-F7_9lI"></script>
 </head>
 <body class="login">
     <div class="header">
-        <a href="/dashboard">Typer Challenge</a>
+        <a href="/dashboard">OoA Typer</a>
         <div>
-            <a href="">ACCOUNT</a>
-            <a href="">LEADERBOARD</a>
-            <a href="">REGISTER</a>
         </div>
     </div>
     <div class="sign-up">
-        <form action="/users/add" method="POST">
+        <form id="registration-form" action="/users/add" method="POST">
             <input type="text" placeholder="Username" name="username" required>
             <input type="password" placeholder="Password" name="password" required>
             <input type="password" placeholder="Re-Enter Password" name="password1" required>
             <% if (message) { %> 
                 <div class="flash-error"> <%= message  %> </div>
             <% } %> 
-            <button type="submit">Sign up</button>
+            <button type="submit">Register</button>
         </form>
     </div>
 </body>
+<script>
+    
+
+</script>
 </html>
