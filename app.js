@@ -246,7 +246,7 @@ app.get('/register', (req, res) => {
 
 
 app.get('/dashboard', isAuth, async (req, res) => {
-    var passage = 'JFJLjkLjfkdljAOIEfeavKfbhuyvYFULgbhLGuoVhjvUovYohjBVHLJShfgSfuyLSVfHJSLfbhJflsyulfvHJSLbfdhSJLFBSYlufvSHlfjhBFjLFyudSVFdhJSLFbhsFlSUFWVELdjhfjklhafualvHLJFBDSjlfblwBFHDsjlbyluBhjlSBDHjlflbHJSLfbBSFDhjlBFjwlehuBFhSLJdLSJHFBL'
+    var passage = 'woodori was a person who valued happiness above all else he had a great passion for driving and always felt a thrill whenever he was behind the wheel thats why he decided to buy a mazda miata a sports car known for its sleek design and responsive handling whenever he took the miata out for a spin woodori felt a rush of excitement and joy he loved the feeling of wind rushing past him as he drove down the open road the mazda miata gave him a sense of freedom and allowed him to escape from the stresses of daily life whether he was cruising through the city or taking a weekend trip to the countryside woodori always felt happy and content when he was driving his beloved miata for him nothing could beat the feeling of the open road and the wind in his hair'
     //creates an array of all the words, but we need a dictionary where 1 = array of characters in word 
     var words = passage.split(" ")
     //need to figure our a way to create an object where words are in order and each have definition of their characters
