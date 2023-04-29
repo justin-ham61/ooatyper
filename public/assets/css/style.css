@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
 
 * {
-    background-color: #333333;
+    background-color: #FFFFFF;
     font-family: 'Courier New', Courier, monospace;
 }
 
@@ -12,7 +12,7 @@
 
 a, p{
     text-decoration: none;
-    color: #888888;
+    color: #545454;
     font-size: 20px;
     transition: .2s;
 }
@@ -25,7 +25,7 @@ a, p{
 
 a:hover,
 #logout-button:hover {
-    color: white;
+    color: rgb(120, 120, 252);
 }
 
 .guide {
@@ -105,7 +105,7 @@ div.login {
 .sign-up > form > input,
 #addFriends > form > input,
 .group-box > form > input {
-    background-color: #555555;
+    background-color: rgb(206, 206, 206);
     border: none;
     height: 50px;
     width: 200px;
@@ -141,6 +141,7 @@ div.login {
 .group-box > form > button:hover,
 .test-finish-btn:hover {
     background-color: rgb(164, 164, 252);
+    cursor: pointer;
 }
 
 .acceptButton,
@@ -186,8 +187,9 @@ div.login {
     height: 50px;
     width: 50px;
     margin: 10px;
-    background-color: #555555;
+    background-color: rgb(209, 209, 209);
     border-radius: 5px;
+    transition: .3s;
 }
     
 
@@ -259,7 +261,7 @@ div.login {
     margin-top: 5px;
     font-size: 30px;
     padding: 20px;
-    background-color: #333333;
+    background-color: #FFFFFF;
     overflow:hidden;
     overflow-x: auto;
 }
@@ -286,7 +288,7 @@ div.login {
     width: 200px;
     height: 76px;
     border: none;
-    background-color: #555555;
+    background-color: #3292ff;
     border-radius: 15px;
     font-size: 24px;
     color: white;
@@ -294,7 +296,8 @@ div.login {
 }
 
 .btn:hover {
-    background-color: #777777;
+    background-color: #0e7eff;
+    cursor: pointer;
 }
 
 #resetBtn {
@@ -302,7 +305,7 @@ div.login {
 }
 
 #wrapper > #words, .word, letter { 
-    background-color: #333333;
+    background-color: #FFFFFF;
     margin-top: 0px;
     margin-bottom: 0px;
 }
@@ -354,7 +357,7 @@ letter {
 }
 
 .correct {
-    color: white;
+    color: rgb(30, 56, 255);;
 }
 
 .incorrect {
@@ -462,6 +465,11 @@ tr[data-place="2"] td{
     border-radius: 5px;
     transition: .2s;
     font-size: 15px;
+}
+
+.error {
+    color: red;
+    text-decoration: underline;
 }
 
 @keyframes blinker {

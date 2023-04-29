@@ -15,9 +15,17 @@
             <a href="/group">GROUP</a>
             <a href="/leaderboard">LEADERBOARD</a>
             <a href="/friendslist">FRIENDS</a>
-            <form action="/logout" method="POST">
-                <button id="logout-button">LOGOUT</button>
-            </form>
+            <a href="/practice">PRACTICE</a>
+            <a href="/dashboard">TEST</a>
+            <% if (isAuth == true) { %>
+                <form action="/logout" method="POST">
+                    <button id="logout-button">LOGOUT</button>
+                </form>
+            <% } else { %>
+                <form action="/login" method="GET">
+                    <button id="logout-button">SIGN IN</button>
+                </form>
+            <% } %>
         </div>
     </div>
     <div class="guide">

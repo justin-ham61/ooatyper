@@ -334,16 +334,27 @@
             <a href="/group">GROUP</a>
             <a href="/leaderboard">LEADERBOARD</a>
             <a href="/friendslist">FRIENDS</a>
-
-            <form action="/logout" method="POST">
-                <button id="logout-button">LOGOUT</button>
-            </form>
+            <a href="/practice">PRACTICE</a>
+            <a href="/dashboard">TEST</a>
+            <% if (isAuth == true) { %>
+                <form action="/logout" method="POST">
+                    <button id="logout-button">LOGOUT</button>
+                </form>
+            <% } else { %>
+                <form action="/login" method="GET">
+                    <button id="logout-button">SIGN IN</button>
+                </form>
+            <% } %>
         </div>
     </div>
-    <p id="countdown">60</p>
+    <p id="countdown">&nbsp;</p>
     <div id="testArea">
         <div id="wrapper">
-            <button id="startBtn" class="btn" onclick="startTest(), startTimer(), dailyTrial()">Begin Test</button>
+            <% if (!isPractice) { %>
+                <button id="startBtn" class="btn" onclick="startTest(), startTimer(), dailyTrial()">Begin Test</button>
+            <% } else { %>
+                <button id="startBtn" class="btn" onclick="startTest(), startTimer(), dailyTrial()">Begin Practice</button>
+            <% } %>
             <div id="caret" class="visible"></div>
             <div id="words">
                 <% for (var i = 0; i < count; i++) { %>
@@ -357,9 +368,15 @@
         </div>
         <div id="summary">
             <p id="wpm"></p>
-            <form action="/group">
-                <button type="submit" class="test-finish-btn">Go To Group Leaderboard</button>
-            </form>
+            <% if (!isPractice){ %>
+                <form action="/group">
+                    <button type="submit" class="test-finish-btn">Go To Group Leaderboard</button>
+                </form>
+            <% } else { %>
+                <form action="/practice">
+                    <button type="submit" class="test-finish-btn">Repeat Practice</button>
+                </form>
+            <% } %>
         </div>
     </div>
 </body>

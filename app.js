@@ -9,6 +9,7 @@ const morgan = require('morgan');
 const flash = require('connect-flash');
 const schedule = require('node-schedule');
 const async = require('async');
+const {wordlib} = require('./const.js')
 
 
 
@@ -25,7 +26,7 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
 
 //middleware for creating user sessions
 const options = {
-    host: '54.245.149.137',
+    host: '54.71.40.98',
     user: 'server',
     password: 'keyboardPass1.',
     database: 'keyboardApp'
@@ -49,7 +50,7 @@ const isAuth = (req, res, next) => {
     if(req.session.isAuth) {
         next()
     }   else {
-        res.redirect("/login")
+        res.redirect("/practice")
     }
 };
 
@@ -141,7 +142,7 @@ const updateDailyVariables = schedule.scheduleJob('0 0 8 * * *', async () => {
 })
 
 app.get('/',(req, res) => {
-    res.redirect('/login')
+    res.redirect('/practice')
 })
 
 app.get('/test', (req, res) => {
@@ -149,7 +150,8 @@ app.get('/test', (req, res) => {
 })
 
 app.get('/guide', (req, res) => {
-    res.render('guide')
+    const isAuth = req.session.isAuth
+    res.render('guide', {isAuth : isAuth})
 })
 
 app.post('/updateDatabase', async (req, res) => {
@@ -246,23 +248,44 @@ app.get('/register', (req, res) => {
 
 
 app.get('/dashboard', isAuth, async (req, res) => {
-    var passage = 'greinke was a diligent and knowledgeable optometrist assistant who worked at a reputable eye clinic she had a keen eye for detail and was always willing to go the extra mile to ensure that patients received the best possible care greinke was empathetic and patient with every person who walked through the door taking the time to understand their concerns and explain their eye care needs her friendly personality and expertise made her a valuable asset to the clinic and she was respected and admired by her colleagues and patients alike with her dedication to providing top notch service greinke left a lasting impression on those she worked with and helped to ensure that everyone who visited the clinic left with a positive experience'
+    var testpassage = 'this is a custom passage typed up to demonstrate the functionality of this website as you can see the user can start typing and their inputs will update each letter to either correct or incorrect and here you can see new letters being created if the user inputs extra letters that dont belong in the word the user has to erase the extra letters for the word to count as a correct word'
     //creates an array of all the words, but we need a dictionary where 1 = array of characters in word 
-    var words = passage.split(" ")
+    var words = testpassage.split(" ")
+    //need to figure our a way to create an object where words are in order and each have definition of their characters
+    var characters = {}
+    for(let i = 0 ; i < words.length; i++){
+        characters[i] = words[i].split("")
+    }
+    const count = words.length;
+    const user_id = req.session.user_id;
+    const isAuth = req.session.isAuth;
+    const isPractice = false;
+    let result = await getUserData(user_id)
+    if (result[0].DailyTrial == 0){
+        res.render('dashboard', {passage : testpassage, count : count, characters : characters, isAuth : isAuth, isPractice : isPractice});
+    } else {
+        res.redirect('/group')
+    }
+})
+
+app.get('/practice', async (req, res) => {
+    console.log(wordlib)
+    var practicePassage = '';
+    for (let i = 0; i < 160; i++){
+        let randNumber = Math.floor(Math.random() * 162)
+        practicePassage = practicePassage + wordlib[randNumber] + ' ';
+    }
+    //creates an array of all the words, but we need a dictionary where 1 = array of characters in word 
+    var words = practicePassage.split(" ")
     //need to figure our a way to create an object where words are in order and each have definition of their characters
     var characters = {}
     for(let i = 0 ; i < words.length; i++){
         characters[i] = words[i].split("")
     }
     const count = words.length
-    let user_id = req.session.user_id
-    let result = await getUserData(user_id)
-    if (result[0].DailyTrial == 0){
-        res.render('dashboard', {passage : passage, count : count, characters : characters});
-    } else {
-        res.redirect('/group')
-    }
-    
+    const isAuth = req.session.isAuth
+    const isPractice = true;
+    res.render('dashboard', {passage : practicePassage, count : count, characters : characters, isAuth : isAuth, isPractice : isPractice});
 })
 
 app.get('/friendslist', isAuth, async (req, res) => {
@@ -371,7 +394,8 @@ app.get('/friendslist', isAuth, async (req, res) => {
     console.log(friendsList)
     count = requestedUsernames.length;
     friendListCount = friendsListNames.length
-    res.render('friendslist', {requestedUsernames : requestedUsernames, count : count, friendsListNames : friendsListNames, friendListCount : friendListCount, message : req.flash('message')})
+    const isAuth = req.session.isAuth
+    res.render('friendslist', {requestedUsernames : requestedUsernames, count : count, friendsListNames : friendsListNames, friendListCount : friendListCount, isAuth : isAuth, message : req.flash('message')})
     console.log('pageloaded')
 })
 
@@ -468,7 +492,7 @@ app.post('/sendfriendrequest', isAuth, (req, res) => {
     //)
 })
 
-app.post('/friendslist/acceptFriendRequest', async (req,res) => {
+app.post('/friendslist/acceptFriendRequest', isAuth, async (req,res) => {
     const username = [req.body.username, req.session.user];
     console.log(username);
     let user_id = [];
@@ -514,7 +538,7 @@ app.post('/friendslist/acceptFriendRequest', async (req,res) => {
     console.log('refreshing page')
 })
 
-app.post('/friendslist/deleteFriend', async (req, res) => {
+app.post('/friendslist/deleteFriend', isAuth, async (req, res) => {
     const username = [req.body.username, req.session.user];
     console.log(username[0]);
     let user_id = [];
@@ -559,7 +583,7 @@ app.post('/friendslist/deleteFriend', async (req, res) => {
 
 })
 
-app.post('/friendslist/rejectFriendRequest', async (req,res) => {
+app.post('/friendslist/rejectFriendRequest', isAuth, async (req,res) => {
     const username = [req.body.username, req.session.user];
     console.log(username);
     let user_id = [];
@@ -605,7 +629,7 @@ app.post('/friendslist/rejectFriendRequest', async (req,res) => {
     console.log('refreshing page')
 })
 
-app.post('/dailyTrial', async (req, res) => {
+app.post('/dailyTrial', isAuth, async (req, res) => {
     let username = req.session.user;
     let user_id = req.session.user_id;
     await updateDailyTrial(user_id);
@@ -613,13 +637,13 @@ app.post('/dailyTrial', async (req, res) => {
     console.log(user_id)
 })
 
-app.post('/updateWPM', async (req, res) => {
+app.post('/updateWPM', isAuth, async (req, res) => {
     let right = req.body.right;
     let user_id = req.session.user_id;
     await updateWPM(user_id, right);
 })
 
-app.get('/leaderboard', async (req, res) => {
+app.get('/leaderboard', isAuth, async (req, res) => {
     let user_id = req.session.user_id;
     let friends = []
     let friendsData = [];
@@ -646,15 +670,19 @@ app.get('/leaderboard', async (req, res) => {
         return b.result[0].wpm - a.result[0].wpm;
     });
 
-    res.render('leaderboard', {friendsData : friendsData})
+    const isAuth = req.session.isAuth
+
+    res.render('leaderboard', {friendsData : friendsData, isAuth : isAuth})
 })
 
-app.get('/group', async (req, res) => {
+app.get('/group', isAuth, async (req, res) => {
     let user_id = req.session.user_id;
     let userData = await getUserData(user_id);
     let groupMembers = await getGroupMembers(userData[0].GroupName);
     let groupMemberId = [];
     let groupMemberData = [];
+    const isAuth = req.session.isAuth
+
     if (userData[0].GroupName == 'No Group'){
         res.render('group', {userData : userData, groupMemberData : groupMemberData, messagejoin : req.flash('message-join'), messageadd : req.flash('message-add'), messageleave : req.flash('message-leave')})
     } else {
@@ -668,11 +696,12 @@ app.get('/group', async (req, res) => {
         groupMemberData.sort(function(a, b) {
             return b.result[0].wpm - a.result[0].wpm;
         });
-        res.render('group', {userData : userData, groupMemberData : groupMemberData, messagejoin : req.flash('message-join'), messageadd : req.flash('message-add'), messageleave : req.flash('message-leave')})
+        res.render('group', {isAuth : isAuth, userData : userData, groupMemberData : groupMemberData, messagejoin : req.flash('message-join'), messageadd : req.flash('message-add'), messageleave : req.flash('message-leave')})
     }   
+    
 })
 
-app.post('/addGroup', async (req, res) => {
+app.post('/addGroup', isAuth, async (req, res) => {
     let user_id = req.session.user_id;
     let groupName = req.body.groupName
 
@@ -695,7 +724,7 @@ app.post('/addGroup', async (req, res) => {
     }
 })
 
-app.post('/joinGroup', async (req, res) => {
+app.post('/joinGroup', isAuth, async (req, res) => {
     let user_id = req.session.user_id;
     let groupName = req.body.groupName1;
 
@@ -711,7 +740,7 @@ app.post('/joinGroup', async (req, res) => {
     }
 })
 
-app.post('/leaveGroup', async (req, res) => {
+app.post('/leaveGroup', isAuth, async (req, res) => {
     let user_id = req.session.user_id;
     await leaveGroup(user_id)
     function leaveGroup(user_id){
@@ -871,7 +900,7 @@ function getGroupMembers(groupName){
         )
     })
 }
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`server is running on localhost:${port}`);
 })

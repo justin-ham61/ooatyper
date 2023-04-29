@@ -5,11 +5,10 @@ let mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const request = require('request')
 const flash = require('connect-flash')
-const e = require('express');
 
 
 let db = mysql.createConnection({
-    host: '54.245.149.137',
+    host: '54.71.40.98',
     user: 'server',
     password: 'keyboardPass1.',
     database: 'keyboardApp'
@@ -36,7 +35,7 @@ router.post('/add', async (req, res) => {
                         });
                         req.flash('message', 'Successfully Registered')
                         res.redirect('/login');
-                        console.log("New user has been added");
+                        console.log("New user has been added")
                     })
                 } else {
                     req.flash('message', 'Password Must Be 8 or More Characters')
@@ -98,6 +97,7 @@ router.post('/login', async (req, res) => {
             })
         })
     }
+
     function getHash(username) {
         return new Promise ((resolve, reject) => {
             db.query(
