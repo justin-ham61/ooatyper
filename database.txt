@@ -1,6 +1,0 @@
-  host: '54.245.149.137',
-    user: 'server',
-    password: 'keyboardPass1.',
-    database: 'keyboardApp'
-
-MYSQL_HOST="54.245.149.137" MYSQL_USER="server" MYSQL_PASSWORD="keyboardPass1." 
